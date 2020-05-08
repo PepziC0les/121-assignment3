@@ -90,7 +90,7 @@ class ContentExtractor:
                 content = db.read()
                 content = content.split("|")
                 for count in range(len(content)):
-                    val = content[count].rsplit(":")
+                    val = content[count].rsplit(":", 1)
                     try:
                         dict_word_freq[val[0]] = val[1]
                     except:
@@ -99,7 +99,7 @@ class ContentExtractor:
                         print(val)
                         #break
             
-            print(len(dict_word_freq))
+            print(dict_word_freq)
 
 if __name__ == "__main__":
     content = ContentExtractor()#"https://www.nltk.org/")
