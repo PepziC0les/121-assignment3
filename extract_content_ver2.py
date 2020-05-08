@@ -26,7 +26,7 @@ class ContentExtractor:
     
     def compute_frequency(self, tokens:list):
         for word in tokens:
-            if len(word) >= 2:
+            if len(word) >= 2 and word.isalnum():
                 self.numOfTerms += 1
                 word = word.lower()
                 if word in self.wordFrequency:
