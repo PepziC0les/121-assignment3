@@ -1,56 +1,111 @@
-import shelve
-
-def buildDocCount(wordFrequency):
-    with shelve.open("WordDocFreq") as db:
-        for word in wordFrequency:
-            if word not in db:
-                db[word] = 1
-            else:
-                db[word] += 1
+import os
 
 
-if __name__ == "__main__":
-    buildDocCount({"New York City":8550405, "Los Angeles":3971883, "Toronto":2731571, "Chicago":2720546, "Houston":2296224, "Montreal":1704694, "Calgary":1239220, "Vancouver":631486, "Boston":667137})
-    buildDocCount({"red" : "rot", "green" : "grün", "blue" : "blau", "yellow":"gelb", "New York City": 1})
-    buildDocCount({"A" : ".-", 
-                    "B" : "-...", 
-                    "C" : "-.-.", 
-                    "D" : "-..", 
-                    "E" : ".", 
-                    "F" : "..-.", 
-                    "G" : "--.", 
-                    "H" : "....", 
-                    "I" : "..", 
-                    "J" : ".---", 
-                    "K" : "-.-", 
-                    "L" : ".-..", 
-                    "M" : "--", 
-                    "N" : "-.", 
-                    "O" : "---", 
-                    "P" : ".--.", 
-                    "Q" : "--.-", 
-                    "R" : ".-.", 
-                    "S" : "...", 
-                    "T" : "-", 
-                    "U" : "..-", 
-                    "V" : "...-", 
-                    "W" : ".--", 
-                    "X" : "-..-", 
-                    "Y" : "-.--", 
-                    "Z" : "--..", 
-                    "0" : "-----", 
-                    "1" : ".----", 
-                    "2" : "..---", 
-                    "3" : "...--", 
-                    "4" : "....-", 
-                    "5" : ".....", 
-                    "6" : "-....", 
-                    "7" : "--...", 
-                    "8" : "---..", 
-                    "9" : "----.", 
-                    "." : ".-.-.-", 
-                    "," : "--..--"})
-   
-    with shelve.open("WordDocFreq") as db:
-        for i in db:
-            print(f"{i} : {db[i]}")
+def buildDocCount():
+    dirs = os.listdir(os.getcwd() + "/TEMP")
+    path=  os.path.join(os.getcwd(), "TEMP")
+    finalDict = dict()
+    #buffer1 = ""
+    for i in dirs:
+        for k in os.listdir(os.path.join(path,i)):
+            with open(os.path.join(path,i,k), "r", buffering=1) as file2:
+                items = file2.read().strip("|").split("|")
+                for j in items:
+                    try:
+                        if j in finalDict:
+                            finalDict[j] += 1
+                        else:
+                            finalDict[j] = 1
+                    except:
+                        pass 
+            os.remove(os.path.join(path,i,k))
+        os.rmdir(os.path.join(path,i))
+    with open("wordDocFreq.txt", "w") as file:
+        for i,j in sorted(finalDict.items()):
+            file.write(f"{i}:{j}|")
+    os.rmdir(os.getcwd() + "/TEMP")
+    
+
+'''
+def buildDocCount():
+    count = 0
+    dirs = os.listdir(os.getcwd() + "/TEMP")
+    path=  os.path.join(os.getcwd(), "TEMP")
+    finalDict = dict()
+    #buffer1 = ""
+    for i in dirs:
+        finalDict.update(mitigateDict(i, path, count))
+        count += 1
+    with open("wordDocFreq.txt", "w") as file:
+        for i,j in sorted(finalDict.items()):
+            file.write(f"{i}:{j}|")
+    os.rmdir(os.getcwd() + "/TEMP")
+
+
+def mitigateDict(i, path, count):
+    partialDict = dict()
+    for k in os.listdir(os.path.join(path,i)):
+        with open(os.path.join(path,i,k), "r", buffering=1) as file2:
+            items = file2.read().strip("|").split("|")
+            for j in items:
+                try:
+                    if j in finalDict:
+                        partialDict[j] += 1
+                    else:
+                        partialDict[j] = 1
+                except:
+                    pass 
+        os.remove(os.path.join(path,i,k))
+    os.rmdir(os.path.join(path,i))
+    print(partialDict)
+    return partialDict
+    #with open(os.path.join(path, f"temp_dict{count}.txt"), "w") as file:
+        #for i,j in sorted(paritalDict.items()):
+            #file.write(f"{i}:{j}|")
+    
+'''
+'''
+            while True:
+                try:
+                    c = file2.read(1)
+                    if not c:
+                        break
+                    if c == "|":
+                        if buffer1 in finalDict:
+                            finalDict[buffer1] += 1
+                        else:
+                            finalDict[buffer1] = 1
+                        print(buffer1, finalDict[buffer1])
+                        buffer1 = ""
+                    else:
+                        buffer1 += c
+                except:
+                    pass
+            '''
+    
+'''
+with open(path + i, "r", buffering=1) as file2:
+            items = file2.read().strip("|").split("|")
+            for j in items:
+                try:
+                    if j in finalDict:
+                        finalDict[j] += 1
+                    else:
+                        finalDict[j] = 1
+                except:
+                    pass
+    os.remove(path + i)
+    pass
+
+'''    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
