@@ -8,9 +8,9 @@ from buildDocCount import buildDocCount
 
 
 class ContentExtractor:
-    def __init__(self, url=None, path=None, jsonLine="", writeLoc=None):
+    def __init__(self, url=None, jsonLine="", globalDict=dict()):
         self.jsonLine = jsonLine
-        self.writeLoc = writeLoc
+        self.globalDict = globalDict
         self.url = url
         self.wordFrequency = dict()
         self.numOfTerms = 0
@@ -37,8 +37,8 @@ class ContentExtractor:
                 
     
     def write_to_file(self, numFiles, numDir,mode="wfd"):
-        if mode == "wfd":
-            path = os.getcwd() + f'/TEMP/DIR{numDir}'
+        path = os.getcwd() + f'/TEMP/DIR{numDir}'
+        if mode == "wfd": #Default, must change specification. This portion deals with helping make the wordDocFreq.txt which is used to calculate idf. Only need to call this when wordDocFreq.txt is missing.
             if not os.path.isdir(path):
                 os.mkdir(path)
             with open(path + f'/file{numFiles}.txt', mode="w") as file:
@@ -47,23 +47,24 @@ class ContentExtractor:
                         file.write(f"{i}|")          
                     except:
                         pass
-    
-    def map_tfidf_term(self):
-        with shelve.open("inverted_index_db", writeback=True) as db1:
-            with shelve.open("WordDocFreq") as db2:
+        else:
+            if not os.path.isdir(path):
+                os.mkdir(path)
+            with open(path + f'/file{numFiles}.txt', mode="w") as file:
                 for i,j in self.wordFrequency.items():
                     value = self.calculate_tfidf(t=j, 
-                                                 numOfDwithT=db2[i], 
-                                                 numOfTerms=self.numOfTerms, 
-                                                 numOfD=57381)
+                                            numOfDwithT= self.wordFrequency[j], 
+                                            numOfTerms=self.numOfTerms, 
+                                            numOfD=57381)
                         
                     pair = (self.url, value)
                     item = [pair]
                     try:
-                        db1[i] = db1[i] + item
+                        file.write(f"{i}|")          
                     except:
-                        db1[i] = item
-                  
+                        pass
+            
+                              
                         
     
     def get_wordFrequencies(self):

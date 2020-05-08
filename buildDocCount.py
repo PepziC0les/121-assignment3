@@ -24,7 +24,10 @@ def buildDocCount():
         for i,j in sorted(finalDict.items()):
             file.write(f"{i}:{j}|")
     os.rmdir(os.getcwd() + "/TEMP")
-    
+
+
+def buildIndex():
+    pass
 
 '''
 def buildDocCount():
