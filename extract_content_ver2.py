@@ -64,7 +64,9 @@ class ContentExtractor:
                     except:
                         pass
             
-                              
+    
+
+
                         
     
     def get_wordFrequencies(self):
@@ -81,11 +83,28 @@ class ContentExtractor:
         idf = log10(numOfD/numOfDwithT)
         return tf * idf
 
+    def convert_wordDocFreq(self):
+        dict_word_freq = {}
+        if os.path.isfile("wordDocFreq.txt"):
+            with open("wordDocFreq.txt", "r") as db:
+                content = db.read()
+                content = content.split("|")
+                for count in range(len(content)):
+                    val = content[count].rsplit(":")
+                    try:
+                        dict_word_freq[val[0]] = val[1]
+                    except:
+                        # prints any errors
+                        print(content[count])
+                        print(val)
+                        #break
+            
+            print(len(dict_word_freq))
 
 if __name__ == "__main__":
-    content = ContentExtractor("https://www.nltk.org/")
-    content.extract_content()
-    print(content.mostFrequentWord)
+    content = ContentExtractor()#"https://www.nltk.org/")
+    #content.extract_content()
+    print(content.convert_wordDocFreq())
     
     
     
