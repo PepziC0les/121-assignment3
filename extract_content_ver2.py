@@ -1,14 +1,14 @@
 import re
-import csv
 import nltk
 import os
+import json
 from bs4 import BeautifulSoup
 from math import log10
 from buildDocCount import buildDocCount
 
 
 class ContentExtractor:
-    def __init__(self, url=None, jsonLine="", globalDict=dict()):
+    def __init__(self, url, jsonLine, globalDict):
         self.jsonLine = jsonLine
         self.globalDict = globalDict
         self.url = url
@@ -26,7 +26,7 @@ class ContentExtractor:
     
     def compute_frequency(self, tokens:list):
         for word in tokens:
-            if len(word) >= 2 and word.isalnum():
+            if len(word) >= 2:
                 self.numOfTerms += 1
                 word = word.lower()
                 if word in self.wordFrequency:
@@ -48,24 +48,29 @@ class ContentExtractor:
                         file.write(f"{i}|")          
                     except:
                         pass
+                    
         elif mode == "index":
             #if not os.path.isdir(path):
             #    os.mkdir(path)
-            with open(os.path.join(os.getcwd(),f'file{numFiles}.json'), mode="w", buffering=1) as file:
+            with open(os.path.join(path,f'file{numFiles}.json'), mode="w", buffering=1) as file:
+                jsonObj = dict()
                 for i,j in self.wordFrequency.items():
-                    value = self.calculate_tfidf(t=j, 
+                    try:
+                        value = self.calculate_tfidf(t=j, 
                                             numOfDwithT= self.globalDict[i], 
                                             numOfTerms=self.numOfTerms, 
                                             numOfD=57381)
                         
-                    pair = {"url":self.url, 
+                        pair = {"url":self.url, 
                             "tfidf":value}
-                    jsonObj = {i:[pair]}
-                    try:
-                        file.write(jsonObj)          
+                        
+                        jsonObj[i] = [pair]
                     except:
                         pass
             
+                json.dump(jsonObj, file, ensure_ascii=False)                  
+                        
+                    
     
 
 
@@ -81,8 +86,8 @@ class ContentExtractor:
         numOfTerms = self.numOfTerms
         if(numOfDwithT == 0):
             numOfDwithT = 1
-        tf = t/numOfDwithT
-        idf = log10(numOfD/numOfDwithT)
+        tf = t/ int(numOfDwithT)
+        idf = log10(numOfD/ int(numOfDwithT))
         return tf * idf
 
 

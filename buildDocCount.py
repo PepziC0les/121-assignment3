@@ -32,14 +32,15 @@ def buildIndex(finalIndexFd:str):
     dirs = os.listdir(path)
     index = dict()
     for url_data_fd in dirs:
-        with open(url_data_fd) as url_file:
-            json_data = json.loads(url_file)
+        with open(os.path.join(path, url_data_fd)) as url_file:
+            data = url_file.read()
+            json_data = json.loads(data)
             for word in json_data:
                 if word in index:
                     index[word].extend(json_data[word])
                 else:
                     index[word] = json_data[word]
-        os.remove(url_data_fd)
+        os.remove(os.path.join(path, url_data_fd))
     
     with open(finalIndexFd, "w") as index_file:
           index_file.write(json.dumps(index))

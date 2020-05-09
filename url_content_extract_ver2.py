@@ -13,7 +13,7 @@ wordDocFreq = dict()
 
 
 def convert_wordDocFreq():
-    global wordDocFre
+    global wordDocFreq
     if os.path.isfile("wordDocFreq.txt"):
         with open("wordDocFreq.txt", "r") as db:
             content = db.read()
@@ -21,7 +21,7 @@ def convert_wordDocFreq():
             for count in range(len(content)):
                 val = content[count].rsplit(":", 1)
                 try:
-                    dict_word_freq[val[0]] = val[1]
+                    wordDocFreq[val[0]] = val[1]
                 except:
                     pass
 
@@ -59,7 +59,6 @@ def getJSONFiles(path: str):
         fileCount += 1
         if fileCount % 4 == 0:
             dirCount += 1
-#shutil.rmtree(os.getcwd() + "/TEMP")
 
 
 
@@ -67,9 +66,14 @@ def getJSONFiles(path: str):
 def main():
     #if os.path.isfile(os.getcwd() + "/wordDocFreq.txt"):
     #    os.remove(os.getcwd() + "/wordDocFreq.txt")
+    if os.path.isfile(os.getcwd() + "/final_index.json"):
+        os.remove(os.getcwd() + "/final_index.json")
+    if os.path.isdir(os.getcwd() + "/TEMP"):
+        shutil.rmtree(os.getcwd() + "/TEMP")
+    
     convert_wordDocFreq()
-    #for i in ["ANALYST", "DEV"]: # 
-    for i in ["SAMPLE"]:
+    for i in ["ANALYST", "DEV"]:
+    #for i in ["SAMPLE"]:
     #for i in ["SAMPLE2"]:
         print(f"Working on {i}")
         if not os.path.isdir(os.getcwd() + "/TEMP"):
