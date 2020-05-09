@@ -12,24 +12,22 @@ dirCount = 0
 wordDocFreq = dict()
 
 
-def make_wordFreqDoc_dict():
-    global wordDocFreq
-    buffer = ""
-    with open("wordDocFreq.txt", "r") as file:
-        while True:
-            try:
-                c = file.read(1)
-                if not c:
-                    break
-                if c == "|":
-                    sep = buffer.find(":")
-                    wordDocFreq[buffer[:sep]] = int(buffer[sep+1:])
-                    buffer = ""
-                else:
-                    buffer += c
-            except:
-                pass
-    print(wordDocFreq)
+def convert_wordDocFreq():
+    global wordDocFre
+    if os.path.isfile("wordDocFreq.txt"):
+        with open("wordDocFreq.txt", "r") as db:
+            content = db.read()
+            content = content.split("|")
+            for count in range(len(content)):
+                val = content[count].rsplit(":", 1)
+                try:
+                    dict_word_freq[val[0]] = val[1]
+                except:
+                    # prints any errors
+                    print(content[count])
+                    print(val)
+                    #break
+    
 
 def getJSONFiles(path: str):
     print("CURRENT PATH IS: ", path)
@@ -48,11 +46,7 @@ def getJSONFiles(path: str):
                 webHTML = obj["content"]
                 content = ContentExtractor(url=url, jsonLine = webHTML, globalDict=wordDocFreq)
                 content.extract_content()
-                content.write_to_file(numFiles=fileCount, numDir=dirCount)
-                    
-                #content.map_tfidf_term() #Used to make inverted index. Do not use with buildDocCount. buildDocCount must be ran first.
-                    
-                #buildDocCount(content.get_wordFrequencies()) #Used to build doc counts. Do not use with map_tfidf. 
+                content.write_to_file(numFiles=fileCount, numDir=dirCount, mode="index")
                     
                 list_paths.pop()
                 
@@ -75,7 +69,7 @@ def getJSONFiles(path: str):
 def main():
     #if os.path.isfile(os.getcwd() + "/wordDocFreq.txt"):
     #    os.remove(os.getcwd() + "/wordDocFreq.txt")
-    make_wordFreqDoc_dict()
+    convert_wordDocFreq()
     #for i in ["ANALYST", "DEV"]: # 
     #for i in ["SAMPLE"]:
     #for i in ["SAMPLE2"]:
