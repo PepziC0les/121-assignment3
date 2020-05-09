@@ -36,7 +36,7 @@ class ContentExtractor:
                     self.wordFrequency[word] = 1
                 
     
-    def write_to_file(self, numFiles, numDir,mode="wfd"):
+    def write_to_file(self, numFiles, numDir,mode="index"):
         path = os.getcwd() + f'/TEMP/DIR{numDir}'
         if mode == "wfd": #Default, must change specification. This portion deals with helping make the wordDocFreq.txt which is used to calculate idf. Only need to call this when wordDocFreq.txt is missing.
             if not os.path.isdir(path):
@@ -50,7 +50,7 @@ class ContentExtractor:
         elif mode == "index":
             if not os.path.isdir(path):
                 os.mkdir(path)
-            with open(path + f'/file{numFiles}.json', mode="w") as file:
+            with open(path + f'/file{numFiles}.json', mode="w", buffering=1) as file:
                 for i,j in self.wordFrequency.items():
                     value = self.calculate_tfidf(t=j, 
                                             numOfDwithT= self.globalDict[j], 
