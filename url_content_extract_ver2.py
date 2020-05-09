@@ -3,7 +3,7 @@ import json
 import time
 import csv 
 from extract_content_ver2 import ContentExtractor
-from buildDocCount import buildDocCount
+from buildDocCount import *
 import shutil
 
 
@@ -23,11 +23,9 @@ def convert_wordDocFreq():
                 try:
                     dict_word_freq[val[0]] = val[1]
                 except:
-                    # prints any errors
-                    print(content[count])
-                    print(val)
-                    #break
-    
+                    pass
+
+
 
 def getJSONFiles(path: str):
     print("CURRENT PATH IS: ", path)
@@ -71,16 +69,16 @@ def main():
     #    os.remove(os.getcwd() + "/wordDocFreq.txt")
     convert_wordDocFreq()
     #for i in ["ANALYST", "DEV"]: # 
-    #for i in ["SAMPLE"]:
+    for i in ["SAMPLE"]:
     #for i in ["SAMPLE2"]:
-    #    print(f"Working on {i}")
-    #    if not os.path.isdir(os.getcwd() + "/TEMP"):
-    #        os.mkdir(os.getcwd() + "/TEMP")
-    #    start = time.time()
-    #    getJSONFiles(os.path.join(os.getcwd(), i))
-    #    end = time.time()
-    #    print(end-start, i)
-    
+        print(f"Working on {i}")
+        if not os.path.isdir(os.getcwd() + "/TEMP"):
+            os.mkdir(os.getcwd() + "/TEMP")
+        start = time.time()
+        getJSONFiles(os.path.join(os.getcwd(), i))
+        end = time.time()
+        print(end-start, i)
+    buildIndex("final_index.json")
     #buildDocCount()
     
     

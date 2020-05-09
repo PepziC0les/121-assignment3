@@ -37,7 +37,8 @@ class ContentExtractor:
                 
     
     def write_to_file(self, numFiles, numDir,mode="index"):
-        path = os.getcwd() + f'/TEMP/DIR{numDir}'
+        #path = os.getcwd() + f'/TEMP/DIR{numDir}'
+        path = os.path.join(os.getcwd(),"TEMP")
         if mode == "wfd": #Default, must change specification. This portion deals with helping make the wordDocFreq.txt which is used to calculate idf. Only need to call this when wordDocFreq.txt is missing.
             if not os.path.isdir(path):
                 os.mkdir(path)
@@ -48,19 +49,20 @@ class ContentExtractor:
                     except:
                         pass
         elif mode == "index":
-            if not os.path.isdir(path):
-                os.mkdir(path)
-            with open(path + f'/file{numFiles}.json', mode="w", buffering=1) as file:
+            #if not os.path.isdir(path):
+            #    os.mkdir(path)
+            with open(os.path.join(os.getcwd(),f'file{numFiles}.json'), mode="w", buffering=1) as file:
                 for i,j in self.wordFrequency.items():
                     value = self.calculate_tfidf(t=j, 
-                                            numOfDwithT= self.globalDict[j], 
+                                            numOfDwithT= self.globalDict[i], 
                                             numOfTerms=self.numOfTerms, 
                                             numOfD=57381)
                         
-                    pair = (self.url, value)
-                    item = [pair]
+                    pair = {"url":self.url, 
+                            "tfidf":value}
+                    jsonObj = {i:[pair]}
                     try:
-                        file.write('{"key":' + self.url + ',"map":' + item + '}')          
+                        file.write(jsonObj)          
                     except:
                         pass
             
@@ -75,7 +77,7 @@ class ContentExtractor:
     
     
     #Cannot use until total number of documents have been counted for, as well as all words.
-    def calculate_tfidf(self, t, numOfDwithT, numOfTerms, numOfD=57381):
+    def calculate_tfidf(self, t, numOfDwithT, numOfTerms, numOfD):
         numOfTerms = self.numOfTerms
         if(numOfDwithT == 0):
             numOfDwithT = 1
