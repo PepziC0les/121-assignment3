@@ -170,7 +170,7 @@ if __name__ == "__main__":
     content = ContentExtractor("https://grape.ics.uci.edu/wiki/public/wiki/cs222-2019-fall-git?version=4", jsonLine, {})
     content.extract_content()
     #print(len(content.get_wordFrequencies()))
-    """
+    
     path = os.path.join(os.getcwd(), "devTest", "grape_ics_uci_edu")
     start = time.time()
     for i in os.listdir(path):
@@ -185,8 +185,8 @@ if __name__ == "__main__":
             #print("wordFreq:", content.wordFrequency)
     end = time.time()    
     print(end-start)
-    """
-    print(content.wordFrequency)
+    
+    #print(content.wordFrequency)
     
     
     
