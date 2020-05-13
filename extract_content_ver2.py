@@ -173,15 +173,15 @@ if __name__ == "__main__":
     
     path = os.path.join(os.getcwd(), "devTest", "grape_ics_uci_edu")
     start = time.time()
-    for i in os.listdir(path):
+    #for i in os.listdir(path):
         #print(f"Working on {i}")
-        with open(os.path.join(path, i)) as file:
-            data = file.read()
-            obj = json.loads(data)
-            url = obj["url"]
-            webHTML = obj["content"]
-            content = ContentExtractor(url=url, jsonLine = webHTML, globalDict = {})
-            content.extract_content()
+    #    with open(os.path.join(path, i)) as file:
+    #        data = file.read()
+    ##        obj = json.loads(data)
+    #        url = obj["url"]
+    #        webHTML = obj["content"]
+    #        content = ContentExtractor(url=url, jsonLine = webHTML, globalDict = {})
+     #       content.extract_content()
             #print("wordFreq:", content.wordFrequency)
     end = time.time()    
     print(end-start)
