@@ -8,7 +8,7 @@ def main():
         if query == "quit()":
             break
         results = Search(query)
-        results.search_index_json()
+        print(results.get_pages())
         
 
 
