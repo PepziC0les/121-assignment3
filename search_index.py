@@ -12,21 +12,14 @@ class Search():
        self._pages = dict()
        self.path = os.getcwd()
        self._numPages = 0
-    
-    def __repr__(self):
-        return str(self._index[self._pages[0]])
-    
-    
-    '''
-    def search_index_txt(self):
-        path = os.path.join(self.path, "PTR","TXT")
-        for i in self._indexes:
-            with open(os.path.join(path, (i + ".txt")), "r") as file:
-                pass
-    '''
+
    
     def search_index_json(self):
-        path = os.path.join(self.path, "PTR","JSON")
+        '''
+        Returns a list of tuples
+        Each tuple consists of a search term and the byte offset in final_index.json
+        '''
+        path = os.path.join(self.path, "PTR", "JSON")
         ptr = []
         
         for i in self._components:
@@ -38,7 +31,6 @@ class Search():
     
     def get_pages(self, bufferSize = 65534):
         with open("final_index.json", "r", buffering=1) as file:
-           #items = dict()
             termValue = ""
             for i in self.search_index_json():
                 file.seek(i[1]-1)
