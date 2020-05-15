@@ -9,7 +9,7 @@ class Search():
     
     def __init__(self, query:str):
        self._components = query.lower().split()
-       self._pages = dict(itertools.zip_longest(*[iter(self._components)] * 2, fillvalue=set()))
+       self._pages = dict(itertools.zip_longest(*[iter(self._components)] * 2, fillvalue=list))
        self.path = os.getcwd()
     
     def __repr__(self):
@@ -28,27 +28,52 @@ class Search():
         path = os.path.join(self.path, "PTR","JSON")
         ptr = []
         
-        start = time.time()
         for i in self._components:
             with open(os.path.join(path, (i[0] + ".json")), "r") as file:
                 item = json.loads(file.read())
                 ptr.append((i, item[i]))
-        end = time.time()
-        print(end-start)
         return ptr
     
     
-    def get_pages(self):
-        with open("final_index.json", "r") as file:
-            for i in self.search_index_json():
+    def get_pages(self, bufferSize = 65534):
+        termPos = self.search_index_json()
+        start = time.time()
+        
+        with open("final_index.json", "r", buffering=1) as file:
+            items = []
+            termValue = ""
+            for i in termPos:
                 file.seek(i[1]-1)
-                prevValue = ""
-                for prefix, the_type, value in ijson.parse(file):
-                    if prefix == '' and the_type == 'map_key':
-                        break
-                    if prefix == "in.item.url":
-                        prevValue = value
-                        self._pages[i[0]][value] = 0
-                    if prefix == "in.item.tfidf":
-                        self._pages[i[0]][prevValue] = value
-        print(self._pages)
+                temp = file.read(bufferSize)
+                termValue = temp
+                
+                while "]" not in temp:
+                    temp = file.read(bufferSize)
+                    termValue += temp
+    
+                termValue = "{" + termValue[:termValue.index("]")+1] + "}"
+                jsonForm = json.loads(termValue)
+                
+                for j in jsonForm[i[0]]:
+                    items.append((j["url"], j["tfidf"]))
+                
+                self._pages[i[0]] = sorted(items)
+
+        #print(self._pages)
+        end = time.time()
+        print(end-start)
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
