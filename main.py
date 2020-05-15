@@ -1,16 +1,14 @@
 from search_index import Search
-
+import time
 
 def main():
-    with open("final_index.json", "r") as file:
-           data = file.read() #Keep items in scope
-           
+
     while True:
         query = input("Search: ")
         if query == "quit()":
             break
-        results = Search(query, data)
-        print(results)
+        results = Search(query)
+        print(results.search_index_json())
         
 
 
