@@ -49,7 +49,20 @@ def buildIndex(finalIndexFd:str):
           index_file.write(json.dumps(index))
         
     os.rmdir(path)
-        
+
+def buildDocIDs():
+    path = os.path.join(os.getcwd(), "docID_to_url.txt")
+    out_path = os.path.join(os.getcwd(), "docID_url.json")
+    with open(path) as input:
+        with open(out_path, "w") as docIDs:
+            docID_dict = dict()
+            values = input.read().split("||")
+            for val in values[:-1]:
+                id, url = val.split("=>")
+                docID_dict[id] = url
+            json.dump(docID_dict, docIDs, ensure_ascii=False)
+    os.remove(path)
+            
     
     
 

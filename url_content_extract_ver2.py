@@ -10,6 +10,7 @@ import shutil
 fileCount = 0
 dirCount = 0
 wordDocFreq = dict()
+count = 0
 
 
 def convert_wordDocFreq():
@@ -33,6 +34,7 @@ def getJSONFiles(path: str):
     global fileCount
     global dirCount
     global wordDocFreq
+    global count
     
     while len(list_paths) > 0:
             
@@ -42,11 +44,13 @@ def getJSONFiles(path: str):
                 obj = json.loads(data)
                 url = obj["url"]
                 webHTML = obj["content"]
-                content = ContentExtractor(url=url, jsonLine = webHTML, globalDict=wordDocFreq)
+                content = ContentExtractor(url=url, jsonLine = webHTML, globalDict=wordDocFreq, count=count)
                 content.extract_content()
                 content.write_to_file(numFiles=fileCount, numDir=dirCount, mode="index")
+                
                     
                 list_paths.pop()
+            count += 1
                 
         else:
             new_path = os.path.join(path, list_paths[-1])
@@ -68,13 +72,12 @@ def main():
     #    os.remove(os.getcwd() + "/wordDocFreq.txt")
     if os.path.isfile(os.getcwd() + "/final_index.json"):
         os.remove(os.getcwd() + "/final_index.json")
-    if os.path.isdir(os.getcwd() + "/TEMP"):
-        shutil.rmtree(os.getcwd() + "/TEMP")
-    
+    #if os.path.isdir(os.getcwd() + "/TEMP"):
+    #    shutil.rmtree(os.getcwd() + "/TEMP")
     convert_wordDocFreq()
-    for i in ["ANALYST", "DEV"]:
+    for i in ["DEV"]:#, "ANALYST"]:
     #for i in ["SAMPLE"]:
-    #for i in ["SAMPLE2"]:
+    #for i in ["devTest"]:
         print(f"Working on {i}")
         if not os.path.isdir(os.getcwd() + "/TEMP"):
             os.mkdir(os.getcwd() + "/TEMP")
@@ -82,7 +85,8 @@ def main():
         getJSONFiles(os.path.join(os.getcwd(), i))
         end = time.time()
         print(end-start, i)
-    buildIndex("final_index.json")
+    #buildIndex("final_index.json")
+    
     #buildDocCount()
     
     

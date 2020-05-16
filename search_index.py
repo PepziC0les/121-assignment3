@@ -26,6 +26,7 @@ class Search():
             with open(os.path.join(path, (i[0] + ".json")), "r", buffering=1) as file:
                 item = json.loads(file.read())
                 ptr.append((i, item[i]))
+        print("ptr: ", ptr)
         return ptr
     
     
@@ -45,14 +46,22 @@ class Search():
                 jsonForm = json.loads(termValue)
                 
                 for j in jsonForm[i[0]]:
+                    #print(j)
                     if j['url'] not in self._pages:
                         self._pages[j['url']] = [j['tfidf']]
                         self._numPages += 1
                     else:
                         self._pages[j['url']].append(j['tfidf'])
+                #print(self._pages)
+        self._pages = {url:tfidf for url, tfidf in self._pages.items() if len(tfidf) == len(self._components)}
+        vals = {url : (sum(tfidf)/len(tfidf)) for url, tfidf in self._pages.items()}
+        sorted_vals = sorted(vals, key=lambda x: vals[x], reverse=True)
+        #print(sorted_vals)
+        for i in sorted_vals[:5]:
+            print("i: ", i, "tfidf: ", vals[i])
+        return sorted_vals[:5]    
         
-        highest = max(len(j) for j in self._pages.values())
-        topResults = [i for i in self._pages.values if i == highest]
+
         
         
         

@@ -11,12 +11,13 @@ import time
 
 
 class ContentExtractor:
-    def __init__(self, url, jsonLine, globalDict):
+    def __init__(self, url, jsonLine, globalDict, count):
         self.jsonLine = jsonLine
         self.globalDict = globalDict
         self.url = url
         self.wordFrequency = dict()
         self.numOfTerms = 0
+        self.id = count
         
 
 
@@ -127,6 +128,7 @@ class ContentExtractor:
             #    os.mkdir(path)
             with open(os.path.join(path,f'file{numFiles}.json'), mode="w", buffering=1) as file:
                 jsonObj = dict()
+                
                 for i,j in self.wordFrequency.items():
                     try:
                         value = self.calculate_tfidf(t=j, 
@@ -134,14 +136,15 @@ class ContentExtractor:
                                             numOfTerms=self.numOfTerms, 
                                             numOfD=57381)
                         
-                        pair = {"url":self.url, 
+                        pair = {"id":self.id, 
                             "tfidf":value}
                         
                         jsonObj[i] = [pair]
                     except:
                         pass
-            
-                json.dump(jsonObj, file, ensure_ascii=False)                  
+                json.dump(jsonObj, file, ensure_ascii=False)          
+            with open(os.path.join(os.getcwd(), "docID_to_url.txt"), mode="a", buffering=1) as file2:
+                file2.write(f"{self.id}=>{self.url}||")        
                         
                     
     
