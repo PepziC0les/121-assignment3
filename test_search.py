@@ -64,7 +64,6 @@ class Search():
                     temp_path = os.path.join(path, word[0] + ".json")
                 else:
                     temp_path = os.path.join(path, "misc.json")
-                start2 = time.time()
                 with open(temp_path, "r") as file:
                     temp = file.read(bufferSize)
                     termValue = temp
@@ -76,8 +75,9 @@ class Search():
                             termValue += temp
                         else:
                             termValue = temp
-
-                    termValue = "{\"" + termValue[:termValue.find("]]")+2] + "}"
+                        if termValue.find("]]") < termValue.find(word):
+                            termValue = termValue[termValue.index(word) - 1:]
+                    termValue = "{" + termValue[:termValue.find("]]")+2] + "}"
 
                     data = json.loads(termValue)
 
@@ -105,18 +105,16 @@ class Search():
                 self._backupPages[url].append(val)
         
         if not done:
-            print("here")
             qf = [self._original.count(word)/len(self._original) for word in self._original]
 
-            for url, val in self._backupPages.items():
-                cosine_sim = dot(qf, val) / (norm(qf) * norm(val))
+            for url in sorted(self._backupPages, key= lambda x: sum(self._backupPages[x]), reverse=True)[:50]:
+                cosine_sim = dot(qf, self._backupPages[url]) / (norm(qf) * norm(self._backupPages[url]))
                 if cosine_sim > results[-1][1] or len(results) < 10:
                     if len(results) == 10:
                         results.pop()
                     results.append((url, cosine_sim))
                     results = sorted(results, key=lambda x: x[1], reverse=True)
 
-        
         return results
                     
             
