@@ -28,7 +28,7 @@ class Search():
 
 
 
-    def new_getPages(self, bufferSize = 85534):
+    def new_getPages(self, bufferSize = 65534):
         path = os.path.join(os.getcwd(),"PTR", "JSON")
         for word in self._components:
             if word[0] in "abcdefghijklmnopqrstuvwxyz":
@@ -47,8 +47,10 @@ class Search():
                     else:
                         termValue = temp
                     if termValue.find("]]") < termValue.find(word):
-                        termValue = termValue[termValue.index(word):]
-                termValue = "{\"" + termValue[:termValue.find("]]")+2] + "}"
+                        termValue = termValue[termValue.index(word) - 1:]
+                termValue = "{" + termValue[:termValue.find("]]")+2] + "}"
+                #with open("test.txt", "w") as file:
+                 #   file.write (termValue)
                 data = json.loads(termValue)
 
                 for val in data[word]:
@@ -91,16 +93,16 @@ class Search():
         results = list()
         done = False
 
-        for url, val in self._pages.items():
-            cosine_sim = dot(qf, val) / (norm(qf) * norm(val))
+        for url in sorted(self._pages, key= lambda x: sum(self._pages[x]), reverse=True)[:50]:
+            cosine_sim = dot(qf, self._pages[url]) / (norm(qf) * norm(self._pages[url]))
             if len(results) < 10 or cosine_sim > results[-1][1]:
                 if len(results) == 10:
                     results.pop()
                     done = True
                 results.append((url, cosine_sim))
-                #results = sorted(results, key=lambda x: x[1], reverse=True)
-            #if url in self._backupPages:
-            #    self._backupPages[url].append(val)
+                results = sorted(results, key=lambda x: x[1], reverse=True)
+            if url in self._backupPages:
+                self._backupPages[url].append(val)
         
         if not done:
             print("here")
