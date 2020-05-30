@@ -41,7 +41,6 @@ class Search():
             with open(temp_path, "r") as file:
                 temp = file.read(bufferSize)
                 termValue = temp
-                start = time.time()
                 # looks through the json, i think this is better, it might be 
                 while True:
                     temp = file.read(bufferSize)
@@ -61,9 +60,8 @@ class Search():
                     if wordPos != -1 and wordPos < endPos:
                         break
                 # formats the result into a json 
-                termValue = "{" + termValue[:termValue.find("]]")+2] + "}"
-                #with open("test.txt", "w") as file:
-                #    file.write(termValue)
+                termValue = "{" + termValue[:endPos+2] + "}"
+
                 data = json.loads(termValue)
 
                 # adds the url and its tfidf value to pages, throws exception if the word doesn't match what came out of the json
@@ -74,8 +72,7 @@ class Search():
                         else:
                             self._pages[val[0]] = [val[1],]
                 except:
-                    print("Sorry, results for your search can not be found in our database")
-                    return
+                    return "Sorry, results for your search can not be found in our database"
         if len(self._pages) < 10:
             for word in self._stopWords:
                 if word[0] in "abcdefghijklmnopqrstuvwxyz":
@@ -85,7 +82,6 @@ class Search():
                 with open(temp_path, "r") as file:
                     temp = file.read(bufferSize)
                     termValue = temp
-                    start = time.time()
                     while True:
                         temp = file.read(bufferSize)
                         if word in termValue.split("\""):
@@ -99,7 +95,7 @@ class Search():
                             termValue = termValue[wordPos:]
                         if wordPos != -1 and wordPos < endPos:
                             break
-                    termValue = "{" + termValue[:termValue.find("]]")+2] + "}"
+                    termValue = "{" + termValue[:endPos + 2] + "}"
                     data = json.loads(termValue)
 
                     try:
@@ -109,11 +105,10 @@ class Search():
                             else:
                                 self._backupPages[val[0]] = [val[1],]
                     except:
-                        print("Sorry, results for your search can not be found in our database")
-                        return
+                        return "Sorry, results for your search can not be found in our database"
         # takes only pages with all existing words
-        self._pages = {url:tfidf for url, tfidf in self._pages.items() if len(tfidf) == len(self._components)}
-        self._backupPages = {url:tfidf for url, tfidf in self._backupPages.items() if len(tfidf) == len(self._stopWords)}
+        self._pages = {url:tfidf for url, tfidf in self._pages.items() if len(tfidf) == len(self._components) or len(tfidf) + 1 == len(self._components)}
+        self._backupPages = {url:tfidf for url, tfidf in self._backupPages.items() if len(tfidf) == len(self._stopWords) or len(tfidf) + 1 == len(self._stopWords)}
 
         # query frequency
         qf = [self._components.count(word)/len(self._components) for word in self._components]
@@ -121,9 +116,11 @@ class Search():
         done = False
 
         for url in sorted(self._pages, key= lambda x: sum(self._pages[x]), reverse=True)[:50]:
+            if len(self._pages[url]) + 1 == len(qf):
+                self._pages[url].append(0.0)
             cosine_sim = dot(qf, self._pages[url]) / (norm(qf) * norm(self._pages[url]))
-            if len(results) < 10 or cosine_sim > results[-1][1]:
-                if len(results) == 10:
+            if len(results) < 5 or cosine_sim > results[-1][1]:
+                if len(results) == 5:
                     results.pop()
                     done = True
                 results.append((url, cosine_sim))
@@ -137,8 +134,8 @@ class Search():
 
             for url in sorted(self._backupPages, key= lambda x: sum(self._backupPages[x]), reverse=True)[:50]:
                 cosine_sim = dot(qf, self._backupPages[url]) / (norm(qf) * norm(self._backupPages[url]))
-                if len(results) < 10 or cosine_sim > results[-1][1]:
-                    if len(results) == 10:
+                if len(results) < 5 or cosine_sim > results[-1][1]:
+                    if len(results) == 5:
                         results.pop()
                     results.append((url, cosine_sim))
                     results = sorted(results, key=lambda x: x[1], reverse=True)
