@@ -42,8 +42,8 @@ class Search():
                 temp = file.read(bufferSize)
                 termValue = temp
                 start = time.time()
-                # gives the code .05 sec to look through the json
-                while time.time() - start < .05:
+                # looks through the json, i think this is better, it might be 
+                while True:
                     temp = file.read(bufferSize)
                     # if the word is in the termValue keep appending if it isn't replace what is in it
                     if word in termValue.split("\""):
@@ -62,6 +62,8 @@ class Search():
                         break
                 # formats the result into a json 
                 termValue = "{" + termValue[:termValue.find("]]")+2] + "}"
+                #with open("test.txt", "w") as file:
+                #    file.write(termValue)
                 data = json.loads(termValue)
 
                 # adds the url and its tfidf value to pages, throws exception if the word doesn't match what came out of the json
@@ -84,7 +86,7 @@ class Search():
                     temp = file.read(bufferSize)
                     termValue = temp
                     start = time.time()
-                    while time.time() - start < .05:
+                    while True:
                         temp = file.read(bufferSize)
                         if word in termValue.split("\""):
                             termValue += temp
