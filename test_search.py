@@ -1,8 +1,6 @@
-import ijson
 import json
 import os
 import time
-import itertools
 from numpy import dot
 from numpy.linalg import norm
 
@@ -41,6 +39,7 @@ class Search():
             with open(temp_path, "r") as file:
                 temp = file.read(bufferSize)
                 termValue = temp
+                start = time.time()
                 # looks through the json, i think this is better, it might be 
                 while True:
                     temp = file.read(bufferSize)
@@ -59,6 +58,8 @@ class Search():
                     # if the word and ending exists break
                     if wordPos != -1 and wordPos < endPos:
                         break
+                    if time.time() - start > .4:
+                        return "Something went wrong, please make sure your search is alphanumeric..."
                 # formats the result into a json 
                 termValue = "{" + termValue[:endPos+2] + "}"
 
@@ -133,6 +134,8 @@ class Search():
             qf = [self._original.count(word)/len(self._original) for word in self._original]
 
             for url in sorted(self._backupPages, key= lambda x: sum(self._backupPages[x]), reverse=True)[:50]:
+                if len(self._backupPages[url]) + 1 == len(qf):
+                    self._backupPages[url].append(0.0)
                 cosine_sim = dot(qf, self._backupPages[url]) / (norm(qf) * norm(self._backupPages[url]))
                 if len(results) < 5 or cosine_sim > results[-1][1]:
                     if len(results) == 5:

@@ -1,15 +1,12 @@
 function populateTable(response) {
 	console.log("test 3");
-	let thead = $("#table-head");
-	thead.append("<tr><td>Results</td></tr>");
-	let tbody = $("#table-body");
-	tbody.append("<tr><td>line 0</td></tr>")
+	results = $("#resultList")
+	results.append("<li>Testing</li>")
 }
 
-$('button').on("click", function(){
-	console.log("test 2");
-	let query = $("#query-text").val();
-	populateTable(query);
+$(document).ready(function() {
+	$("$inputButton").click(function() {
+		let str = $("$inputText").val;
+		alert(str);
+	});
 });
-
-console.log("test 1");
